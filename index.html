@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Traffic layer</title>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 50%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="canvas"></div>
+    <script>
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 13,
+          center: {lat: 34.04924594193164, lng: -118.24104309082031},
+          disableDefaultUI: true
+        });
+
+        var trafficLayer = new google.maps.TrafficLayer();
+        trafficLayer.setMap(map);
+
+        google.maps.event.addListenerOnce(map, 'tilesloaded', makeCanvas);
+
+      }
+
+      function makeCanvas(){
+        html2canvas(document.getElementById('map'), {
+          useCORS: true,
+          onrendered: function(canvas) {
+            //document.body.appendChild(canvas);
+            document.getElementById('canvas').appendChild(canvas);
+            var dataURL = getDataUrl();
+            console.log(dataURL);
+            document.getElementById('data-url').setAttribute('href', dataURL);
+          }
+        });
+
+
+
+      }
+
+      function getDataUrl(){
+        var canvas = document.querySelector('#canvas canvas');
+        var dataURL = canvas.toDataURL();
+        //console.log(dataURL);
+        return dataURL;
+
+      }
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?callback=initMap">
+    </script>
+    <script src="html2canvas.js"></script>
+    <button onclick="makeCanvas()">canvas</button> 
+    <button onclick="getDataUrl()">make data url</button>
+    <a id="data-url">data</a>
+  </body>
+</html>
